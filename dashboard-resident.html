@@ -49,6 +49,7 @@
             <!-- Dashboard Main -->
             <section id="dashboardMain" class="p-8">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
                     <!-- Officials Contacts Card -->
                     <div class="bg-white rounded-lg shadow p-6 flex flex-col">
                         <div class="flex items-center mb-4">
@@ -56,14 +57,22 @@
                             <span class="font-bold text-lg text-blue-800">BRGY Officials Contacts</span>
                         </div>
                         <div id="officialsContactsCard" class="overflow-y-auto max-h-64"></div>
-<div id="officialPicUploadContainer" class="mt-4 hidden">
-    <form id="officialPicForm" class="bg-gray-50 p-4 rounded shadow flex items-center">
-        <input type="file" id="officialPicInput" accept="image/*" class="border px-2 py-1 rounded w-full mr-2">
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Upload My Picture</button>
-        <div id="officialPicError" class="text-red-600 ml-2"></div>
-    </form>
-</div>
+                        <div id="officialPicUploadContainer" class="mt-4 hidden">
+                            <form id="officialPicForm" class="bg-gray-50 p-4 rounded shadow flex items-center">
+                                <input type="file" id="officialPicInput" accept="image/*" class="border px-2 py-1 rounded w-full mr-2">
+                                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Upload My Picture</button>
+                                <div id="officialPicError" class="text-red-600 ml-2"></div>
+                            </form>
+                        </div>
                         <div class="text-xs text-gray-500 mt-2" id="officialsContactsTime">Last updated: --</div>
+                    </div>
+                    <!-- Emergency Hotlines Card -->
+                    <div class="bg-white rounded-lg shadow p-6 flex flex-col">
+                        <div class="flex items-center mb-4">
+                            <span class="text-red-700 text-xl mr-2">🚨</span>
+                            <span class="font-bold text-lg text-red-700">Emergency Hotlines</span>
+                        </div>
+                        <div id="hotlinesCardList" class="overflow-y-auto max-h-64"></div>
                     </div>
                     <!-- Schedule Card -->
                     <div class="bg-white rounded-lg shadow p-6 flex flex-col">
