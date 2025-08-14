@@ -292,3 +292,32 @@
         renderOfficialsSchedule();
         renderAnnouncementsCard();
     });
+
+    // Emergency Hotlines logic (resident view-only)
+    function getHotlines() {
+        return JSON.parse(localStorage.getItem('barangayHotlines') || '[]');
+    }
+    function renderHotlinesCards() {
+        const container = document.getElementById('hotlinesCardList');
+        if (!container) return;
+        container.innerHTML = '';
+        const hotlines = getHotlines();
+        if (hotlines.length === 0) {
+            container.innerHTML = '<div class="text-gray-500">No emergency hotlines available.</div>';
+            return;
+        }
+        hotlines.forEach((h) => {
+            const div = document.createElement('div');
+            div.className = 'bg-white border-l-4 border-red-700 p-3 mb-3 rounded shadow flex items-center';
+            let imgHtml = '';
+            if (h.image) {
+                imgHtml = `<img src='${h.image}' alt='Hotline Image' class='w-24 h-16 object-cover rounded mb-2 mr-4'>`;
+            }
+            div.innerHTML = `<div class='flex items-center'>${imgHtml}<div><div class='font-bold text-red-700 text-lg mb-1'>${h.name}</div>
+                <div class='text-gray-700 text-sm mb-2'>${h.number}</div></div></div>`;
+            container.appendChild(div);
+        });
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        renderHotlinesCards();
+    });
