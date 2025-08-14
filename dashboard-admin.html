@@ -69,22 +69,22 @@
                     </div>
                 </section>
             <!-- Announcement & Event Section -->
-                <section id="announcementSection" class="hidden p-8">
-                    <h3 class="text-xl font-bold text-blue-800 mb-4">Announcement & Event</h3>
-                    <div id="announcementsSection" class="bg-white border border-gray-300 rounded-lg p-4 mb-4">
-                        <div id="announcementCardList"></div>
-                        <div id="announcementFormContainer" class="mt-4">
-                            <form id="announcementForm" class="bg-gray-50 p-4 rounded shadow">
-                                <input type="text" id="announcementTitle" placeholder="Title" class="border px-2 py-1 rounded w-full mb-2" required>
-                                <input type="date" id="announcementDate" class="border px-2 py-1 rounded w-full mb-2" required>
-                                <textarea id="announcementDetails" placeholder="Details" class="border px-2 py-1 rounded w-full mb-2" required></textarea>
-                                <input type="file" id="announcementImage" accept="image/*" class="border px-2 py-1 rounded w-full mb-2">
-                                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Add Announcement</button>
-                                <div id="announcementError" class="text-red-600 mt-2"></div>
-                            </form>
-                        </div>
-                    </div>
-                </section>
+               <section id="announcementSection" class="hidden p-8">
+    <h3 class="text-xl font-bold text-blue-800 mb-4">Announcement & Event</h3>
+    <div id="announcementsSection" class="bg-white border border-gray-300 rounded-lg p-4 mb-4">
+        <div id="announcementCardList"></div>
+        <div id="announcementFormContainer" class="mt-4">
+            <form id="announcementForm" class="bg-gray-50 p-4 rounded shadow">
+                <input type="text" id="announcementTitle" placeholder="Title" class="border px-2 py-1 rounded w-full mb-2" required>
+                <input type="date" id="announcementDate" class="border px-2 py-1 rounded w-full mb-2" required>
+                <textarea id="announcementDetails" placeholder="Details" class="border px-2 py-1 rounded w-full mb-2" required></textarea>
+                <input type="file" id="announcementImage" accept="image/*" class="border px-2 py-1 rounded w-full mb-2">
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Add Announcement</button>
+                <div id="announcementError" class="text-red-600 mt-2"></div>
+            </form>
+        </div>
+    </div>
+</section>
             <!-- Tabbed Sections -->
             <section id="residentsSection" class="hidden p-8">
                 <h3 class="text-xl font-bold text-blue-800 mb-4">Residents</h3>
@@ -129,26 +129,28 @@
     <script src="script.js"></script>
     <script src="admin.js"></script>
     <script>
-    // Tab switching logic
     function showTab(tabId) {
-        // Hide all tab sections
-        document.querySelectorAll('section').forEach(s => {
-            s.classList.add('hidden');
-        });
-        // Show selected tab only
-        var activeSection = document.getElementById(tabId);
-        if (activeSection) {
-            activeSection.classList.remove('hidden');
-        }
-        // Render announcements only in its tab
-        if (tabId === 'announcementSection' && typeof renderAnnouncementCards === 'function') {
-            renderAnnouncementCards();
-        } else {
-            // Clear announcement HTML if leaving the tab
-            var container = document.getElementById('announcementCardList');
-            if (container) container.innerHTML = '';
-        }
+    // Hide all tab sections
+    document.querySelectorAll('section').forEach(s => {
+        s.style.display = 'none';
+    });
+
+    // Show selected tab only
+    var activeSection = document.getElementById(tabId);
+    if (activeSection) {
+        activeSection.style.display = 'block';
     }
+
+    // Render announcements only in its tab
+    if (tabId === 'announcementSection' && typeof renderAnnouncementCards === 'function') {
+        renderAnnouncementCards();
+    } else {
+        // Clear announcement HTML if leaving the tab
+        var container = document.getElementById('announcementCardList');
+        if (container) container.innerHTML = '';
+    }
+}
+
     // Show dashboard by default on load
     document.addEventListener('DOMContentLoaded', function() {
         showTab('dashboardMain');
@@ -248,8 +250,9 @@
                     { title: 'Health Check-Up', date: '2025-08-25', details: 'Free health check-up for all residents at the barangay hall.' }
                 ]);
             }
-            renderAnnouncementCards();
+          
         });
         </script>
 </body>
 </html>
+
