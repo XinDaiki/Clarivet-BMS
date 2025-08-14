@@ -40,6 +40,7 @@
                     <li><button onclick="showTab('complaintsSection')" class="sidebar-btn w-full flex items-center px-4 py-2 rounded"><span class="mr-2">📢</span> Complaint</button></li>
                     <li><button onclick="showTab('documentsSection')" class="sidebar-btn w-full flex items-center px-4 py-2 rounded"><span class="mr-2">📄</span> Document Request</button></li>
                     <li><button onclick="showTab('announcementSection')" class="sidebar-btn w-full flex items-center px-4 py-2 rounded"><span class="mr-2">📣</span> Announcement & Event</button></li>
+                    <li><button onclick="showTab('hotlinesSection')" class="sidebar-btn w-full flex items-center px-4 py-2 rounded"><span class="mr-2">🚨</span> Emergency Hotlines</button></li>
                 </ul>
                 </ul>
             </nav>
@@ -68,22 +69,176 @@
                         <div class="bg-green-600 text-white rounded-lg p-6 flex flex-col items-center"><span class="text-3xl mb-2">💲</span><div class="font-bold text-lg">REVENUE</div><div class="text-2xl">₱ 350.00</div><div class="mt-2 text-sm">All Revenues</div></div>
                     </div>
                 </section>
+
+                <!-- Emergency Hotlines Tab -->
+                <section id="hotlinesSection" class="hidden p-8">
+                    <h3 class="text-xl font-bold text-red-700 mb-4">Emergency Hotlines</h3>
+                    <div class="bg-white rounded-lg shadow p-6 flex flex-col">
+                        <div id="hotlinesFormContainer" class="mb-4">
+                            <form id="hotlinesForm" class="bg-gray-50 p-4 rounded shadow">
+                                <input type="text" id="hotlineName" placeholder="Hotline Name" class="border px-2 py-1 rounded w-full mb-2" required>
+                                <input type="text" id="hotlineNumber" placeholder="Hotline Number" class="border px-2 py-1 rounded w-full mb-2" required>
+                                <input type="file" id="hotlineImage" accept="image/*" class="border px-2 py-1 rounded w-full mb-2">
+                                <button type="submit" class="bg-red-700 text-white px-4 py-2 rounded">Add Hotline</button>
+                                <button type="button" id="cancelHotlineEdit" class="ml-2 bg-gray-400 text-white px-4 py-2 rounded hidden">Cancel</button>
+                                <div id="hotlineError" class="text-red-600 mt-2"></div>
+                            </form>
+                        </div>
+                        <div id="hotlinesCardList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                    </div>
+                </section>
+    <script>
+    // Emergency Hotlines logic (editable for admin)
+    function getHotlines() {
+        return JSON.parse(localStorage.getItem('barangayHotlines') || '[]');
+    }
+    function saveHotlines(list) {
+        localStorage.setItem('barangayHotlines', JSON.stringify(list));
+    }
+    function renderHotlinesCards() {
+        const container = document.getElementById('hotlinesCardList');
+        if (!container) return;
+        container.innerHTML = '';
+        const hotlines = getHotlines();
+        if (hotlines.length === 0) {
+            container.innerHTML = '<div class="col-span-1 md:col-span-2 lg:col-span-3 text-gray-500 text-center py-8">No emergency hotlines available.</div>';
+            return;
+        }
+        hotlines.forEach((h, idx) => {
+            const div = document.createElement('div');
+            div.className = 'bg-white border-l-4 border-red-700 p-3 rounded shadow flex flex-col';
+            let imgHtml = '';
+            if (h.image) {
+                imgHtml = `<img src='${h.image}' alt='Hotline Image' class='w-full h-24 object-cover rounded mb-2'>`;
+            }
+            div.innerHTML = `${imgHtml}<div class='font-bold text-red-700 text-lg mb-1'>${h.name}</div>
+                <div class='text-gray-700 text-sm mb-2'>${h.number}</div>
+                <div class='flex justify-end'><button onclick="editHotline(${idx})" class="mr-2 text-red-700 text-xs">Edit</button><button onclick="deleteHotline(${idx})" class="text-gray-600 text-xs">Delete</button></div>`;
+            container.appendChild(div);
+        });
+    }
+    // Hotline form logic
+    const hotlinesForm = document.getElementById('hotlinesForm');
+    const cancelHotlineEditBtn = document.getElementById('cancelHotlineEdit');
+    if (hotlinesForm) {
+        hotlinesForm.onsubmit = function(e) {
+            e.preventDefault();
+            const name = document.getElementById('hotlineName').value.trim();
+            const number = document.getElementById('hotlineNumber').value.trim();
+            const imageInput = document.getElementById('hotlineImage');
+            const errorDiv = document.getElementById('hotlineError');
+            errorDiv.textContent = '';
+            if (!name || !number) {
+                errorDiv.textContent = 'Please fill in all fields.';
+                return;
+            }
+            let imageData = '';
+            if (imageInput && imageInput.files && imageInput.files[0]) {
+                const file = imageInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    imageData = evt.target.result;
+                    addHotline(name, number, imageData);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                addHotline(name, number, '');
+            }
+        };
+    }
+    function addHotline(name, number, image) {
+        const hotlines = getHotlines();
+        if (window.editHotlineIdx !== undefined && window.editHotlineIdx !== null) {
+            hotlines[window.editHotlineIdx] = { name, number, image };
+            window.editHotlineIdx = null;
+            cancelHotlineEditBtn.classList.add('hidden');
+        } else {
+            hotlines.push({ name, number, image });
+        }
+        saveHotlines(hotlines);
+        hotlinesForm.reset();
+        renderHotlinesCards();
+    }
+    // Edit hotline
+    window.editHotlineIdx = null;
+    window.editHotline = function(idx) {
+        const hotlines = getHotlines();
+        const h = hotlines[idx];
+        document.getElementById('hotlineName').value = h.name;
+        document.getElementById('hotlineNumber').value = h.number;
+        // No image preview for edit, but can re-upload
+        window.editHotlineIdx = idx;
+        cancelHotlineEditBtn.classList.remove('hidden');
+    };
+    // Cancel edit
+    if (cancelHotlineEditBtn) {
+        cancelHotlineEditBtn.onclick = function() {
+            hotlinesForm.reset();
+            window.editHotlineIdx = null;
+            cancelHotlineEditBtn.classList.add('hidden');
+        };
+    }
+    // Delete hotline
+    window.deleteHotline = function(idx) {
+        if (!confirm('Delete this hotline?')) return;
+        const hotlines = getHotlines();
+        hotlines.splice(idx, 1);
+        saveHotlines(hotlines);
+        renderHotlinesCards();
+    };
+    // Initial hotlines (if none)
+    if (!localStorage.getItem('barangayHotlines')) {
+        saveHotlines([
+            { name: 'Police', number: '911', image: '' },
+            { name: 'Fire Department', number: '922', image: '' },
+            { name: 'Hospital', number: '933', image: '' }
+        ]);
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        renderHotlinesCards();
+    });
+    </script>
             <!-- Announcement & Event Section -->
-               <section id="announcementSection" class="hidden p-8">
+            <section id="announcementSection" class="p-8">
     <h3 class="text-xl font-bold text-blue-800 mb-4">Announcement & Event</h3>
-    <div id="announcementsSection" class="bg-white border border-gray-300 rounded-lg p-4 mb-4">
-        <div id="announcementCardList"></div>
-        <div id="announcementFormContainer" class="mt-4">
-            <form id="announcementForm" class="bg-gray-50 p-4 rounded shadow">
-                <input type="text" id="announcementTitle" placeholder="Title" class="border px-2 py-1 rounded w-full mb-2" required>
-                <input type="date" id="announcementDate" class="border px-2 py-1 rounded w-full mb-2" required>
-                <textarea id="announcementDetails" placeholder="Details" class="border px-2 py-1 rounded w-full mb-2" required></textarea>
-                <input type="file" id="announcementImage" accept="image/*" class="border px-2 py-1 rounded w-full mb-2">
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Add Announcement</button>
-                <div id="announcementError" class="text-red-600 mt-2"></div>
-            </form>
-        </div>
+    <!-- Announcement Form always at top -->
+    <div id="announcementFormContainer" class="bg-white border border-gray-300 rounded-lg p-4 mb-6">
+        <form id="announcementForm" class="bg-gray-50 p-4 rounded shadow">
+            <input type="text" id="announcementTitle" placeholder="Title" class="border px-2 py-1 rounded w-full mb-2" required>
+            <input type="date" id="announcementDate" class="border px-2 py-1 rounded w-full mb-2" required>
+            <textarea id="announcementDetails" placeholder="Details" class="border px-2 py-1 rounded w-full mb-2" required></textarea>
+            <input type="file" id="announcementImage" accept="image/*" class="border px-2 py-1 rounded w-full mb-2">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Add Announcement</button>
+            <div id="announcementError" class="text-red-600 mt-2"></div>
+        </form>
     </div>
+    <!-- Announcement Grid -->
+    <div id="announcementCardList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    <script>
+    // Always show announcement grid, even if empty
+    function renderAdminAnnouncements() {
+        const db = JSON.parse(localStorage.getItem('barangayDb')) || { announcements: [] };
+        const announcements = db.announcements || [];
+        let html = '';
+        if (announcements.length === 0) {
+            html = '<div class="col-span-1 md:col-span-2 lg:col-span-3 text-gray-500 text-center py-8">No announcements yet.</div>';
+        } else {
+            announcements.forEach(a => {
+                html += `<div class='bg-white border-l-4 border-blue-800 p-2 rounded shadow flex flex-col'>
+                    <div class='font-bold text-blue-800 text-base mb-1'>${a.title}</div>
+                    <div class='text-xs text-gray-500 mb-1'>${a.date}</div>
+                    <div class='text-gray-700 text-xs mb-2'>${a.details}</div>
+                    ${a.image ? `<img src='${a.image}' alt='Announcement Image' class='w-full h-20 object-cover rounded mb-2'>` : ''}
+                    <div><a href="#" onclick="editAnnouncement(${a.id})" class="text-blue-600 text-xs mr-2">Edit</a><a href="#" onclick="deleteAnnouncement(${a.id})" class="text-red-600 text-xs">Delete</a></div>
+                </div>`;
+            });
+        }
+        document.getElementById('announcementCardList').innerHTML = html;
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        renderAdminAnnouncements();
+    });
+    </script>
 </section>
             <!-- Tabbed Sections -->
             <section id="residentsSection" class="hidden p-8">
@@ -128,131 +283,5 @@
     </div>
     <script src="script.js"></script>
     <script src="admin.js"></script>
-    <script>
-    function showTab(tabId) {
-    // Hide all tab sections
-    document.querySelectorAll('section').forEach(s => {
-        s.style.display = 'none';
-    });
-
-    // Show selected tab only
-    var activeSection = document.getElementById(tabId);
-    if (activeSection) {
-        activeSection.style.display = 'block';
-    }
-
-    // Render announcements only in its tab
-    if (tabId === 'announcementSection' && typeof renderAnnouncementCards === 'function') {
-        renderAnnouncementCards();
-    } else {
-        // Clear announcement HTML if leaving the tab
-        var container = document.getElementById('announcementCardList');
-        if (container) container.innerHTML = '';
-    }
-}
-
-    // Show dashboard by default on load
-    document.addEventListener('DOMContentLoaded', function() {
-        showTab('dashboardMain');
-    });
-    </script>
-        <script>
-        // Editable announcement logic for admin
-        document.addEventListener('DOMContentLoaded', function() {
-            function getAnnouncements() {
-                return JSON.parse(localStorage.getItem('barangayAnnouncements') || '[]');
-            }
-            function saveAnnouncements(list) {
-                localStorage.setItem('barangayAnnouncements', JSON.stringify(list));
-            }
-            function renderAnnouncementCards() {
-                const container = document.getElementById('announcementCardList');
-                if (!container) return;
-                container.innerHTML = '';
-                const announcements = getAnnouncements();
-                announcements.forEach((a, idx) => {
-                    const div = document.createElement('div');
-                    div.className = 'bg-white border-l-4 border-blue-800 p-3 mb-3 rounded shadow';
-                    div.innerHTML = `<div class='font-bold text-blue-800 text-lg mb-1'>${a.title}</div>
-                        <div class='text-xs text-gray-500 mb-1'>${a.date}</div>
-                        <div class='text-gray-700 text-sm mb-2'>${a.details}</div>`;
-                    if (a.image) {
-                        div.innerHTML += `<img src='${a.image}' alt='Announcement Image' class='w-full max-h-48 object-cover rounded mb-2'>`;
-                    }
-                    div.innerHTML += `<button onclick="editAnnouncement(${idx})" class="mr-2 text-blue-600 text-xs">Edit</button>`;
-                    div.innerHTML += `<button onclick="deleteAnnouncement(${idx})" class="text-red-600 text-xs">Delete</button>`;
-                    container.appendChild(div);
-                });
-            }
-            // Announcement form logic (with image)
-            const announcementForm = document.getElementById('announcementForm');
-            if (announcementForm) {
-                announcementForm.onsubmit = function(e) {
-                    e.preventDefault();
-                    const title = document.getElementById('announcementTitle').value.trim();
-                    const date = document.getElementById('announcementDate').value;
-                    const details = document.getElementById('announcementDetails').value.trim();
-                    const imageInput = document.getElementById('announcementImage');
-                    const errorDiv = document.getElementById('announcementError');
-                    errorDiv.textContent = '';
-                    if (!title || !date || !details) {
-                        errorDiv.textContent = 'Please fill in all fields.';
-                        return;
-                    }
-                    let imageData = '';
-                    if (imageInput && imageInput.files && imageInput.files[0]) {
-                        const file = imageInput.files[0];
-                        const reader = new FileReader();
-                        reader.onload = function(evt) {
-                            imageData = evt.target.result;
-                            addAnnouncement(title, date, details, imageData);
-                        };
-                        reader.readAsDataURL(file);
-                    } else {
-                        addAnnouncement(title, date, details, '');
-                    }
-                };
-            }
-            function addAnnouncement(title, date, details, image) {
-                const announcements = getAnnouncements();
-                if (editIdx !== null) {
-                    announcements[editIdx] = { title, date, details, image };
-                    editIdx = null;
-                } else {
-                    announcements.push({ title, date, details, image });
-                }
-                saveAnnouncements(announcements);
-                announcementForm.reset();
-                renderAnnouncementCards();
-            }
-            // Edit announcement
-            let editIdx = null;
-            window.editAnnouncement = function(idx) {
-                const announcements = getAnnouncements();
-                const a = announcements[idx];
-                document.getElementById('announcementTitle').value = a.title;
-                document.getElementById('announcementDate').value = a.date;
-                document.getElementById('announcementDetails').value = a.details;
-                editIdx = idx;
-            };
-            // Delete announcement
-            window.deleteAnnouncement = function(idx) {
-                if (!confirm('Delete this announcement?')) return;
-                const announcements = getAnnouncements();
-                announcements.splice(idx, 1);
-                saveAnnouncements(announcements);
-                renderAnnouncementCards();
-            };
-            // Initial announcements (if none)
-            if (!localStorage.getItem('barangayAnnouncements')) {
-                saveAnnouncements([
-                    { title: 'Barangay Clean-Up Drive', date: '2025-08-20', details: 'Join us for a community clean-up at 8am.' },
-                    { title: 'Health Check-Up', date: '2025-08-25', details: 'Free health check-up for all residents at the barangay hall.' }
-                ]);
-            }
-          
-        });
-        </script>
 </body>
 </html>
-
