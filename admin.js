@@ -230,7 +230,7 @@ function loadAnnouncements() {
             `;
         });
     }
-    document.getElementById('announcementList').innerHTML = html;
+    var _listEl = document.getElementById('announcementCardList'); if (_listEl) { _listEl.innerHTML = html; }
 }
 
 function saveAnnouncements(list) {
@@ -291,8 +291,8 @@ function editAnnouncement(id) {
     document.getElementById('announcementTitle').value = announcement.title;
     document.getElementById('announcementDate').value = announcement.date;
     document.getElementById('announcementDetails').value = announcement.details;
-    document.getElementById('announcementSubmitBtn').textContent = 'Update Announcement';
-    document.getElementById('announcementCancelEdit').classList.remove('hidden');
+    var _submitBtn = document.getElementById('announcementSubmitBtn'); if (_submitBtn) _submitBtn.textContent = 'Update Announcement';
+    var _cancelBtn2 = document.getElementById('announcementCancelEdit'); if (_cancelBtn2) _cancelBtn2.classList.remove('hidden');
 }
 
 function deleteAnnouncement(id) {
@@ -310,7 +310,7 @@ function resetAnnouncementForm() {
     document.getElementById('announcementCancelEdit').classList.add('hidden');
 }
 
-document.getElementById('announcementCancelEdit').onclick = function() {
+var _cancelBtn = document.getElementById('announcementCancelEdit');
+if (_cancelBtn) _cancelBtn.onclick = function() {
     resetAnnouncementForm();
 };
-
