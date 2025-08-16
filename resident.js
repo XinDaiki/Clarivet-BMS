@@ -216,7 +216,8 @@
 
         // Announcements Card
         function getAnnouncements() {
-            return JSON.parse(localStorage.getItem('barangayAnnouncements') || '[]');
+            const db = JSON.parse(localStorage.getItem('barangayDb')) || { announcements: [] };
+            return db.announcements || [];
         }
         function renderAnnouncementsCard() {
             const container = document.getElementById('announcementsCard');
@@ -273,19 +274,22 @@
             };
         }
         function addAnnouncement(title, date, details, image) {
-            const announcements = getAnnouncements();
-            announcements.push({ title, date, details, image });
-            localStorage.setItem('barangayAnnouncements', JSON.stringify(announcements));
+            const db = JSON.parse(localStorage.getItem('barangayDb')) || { announcements: [] };
+            db.announcements = db.announcements || [];
+            db.announcements.push({ title, date, details, image });
+            localStorage.setItem('barangayDb', JSON.stringify(db));
             document.getElementById('announcementForm').reset();
             renderAnnouncementsCard();
         }
 
         // Initial announcements (if none)
-        if (!localStorage.getItem('barangayAnnouncements')) {
-            localStorage.setItem('barangayAnnouncements', JSON.stringify([
+        const db = JSON.parse(localStorage.getItem('barangayDb')) || {};
+        if (!db.announcements) {
+            db.announcements = [
                 { title: 'Barangay Clean-Up Drive', date: '2025-08-20', details: 'Join us for a community clean-up at 8am.' },
                 { title: 'Health Check-Up', date: '2025-08-25', details: 'Free health check-up for all residents at the barangay hall.' }
-            ]));
+            ];
+            localStorage.setItem('barangayDb', JSON.stringify(db));
         }
 
         renderOfficialsContacts();
