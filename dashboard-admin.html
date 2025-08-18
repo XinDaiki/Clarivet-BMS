@@ -36,7 +36,7 @@
 <nav class="flex-1 px-2 py-4">
 <ul class="space-y-2">
 <li><button class="sidebar-btn w-full flex items-center px-4 py-2 rounded" onclick="showTab('dashboardMain')"><span class="mr-2">🏠</span> Dashboard</button></li>
-<li><button class="sidebar-btn w-full flex items-center px-4 py-2 rounded" onclick="showTab('residentsSection')"><span class="mr-2">👥</span> Residents Record</button></li>
+<li><button class="sidebar-btn w-full flex items-center px-4 py-2 rounded" onclick="showTab('residentInfoSection')"><span class="mr-2">📄</span> Resident Information</button></li>
 <li><button class="sidebar-btn w-full flex items-center px-4 py-2 rounded" onclick="showTab('officialsSection')"><span class="mr-2">🧑‍💼</span> Brgy Officials</button></li>
 <li><button class="sidebar-btn w-full flex items-center px-4 py-2 rounded" onclick="showTab('complaintsSection')"><span class="mr-2">📢</span> Complaint</button></li>
 <li><button class="sidebar-btn w-full flex items-center px-4 py-2 rounded" onclick="showTab('documentsSection')"><span class="mr-2">📄</span> Document Request</button></li>
@@ -48,6 +48,7 @@
 </aside>
 <!-- Main Content -->
 <div class="flex-1 bg-gray-100">
+
 <!-- Top Bar -->
 <header class="bg-blue-600 text-white flex justify-between items-center px-8 py-4">
 <h1 class="text-2xl font-bold">Dashboard</h1>
@@ -56,14 +57,67 @@
 <img alt="User" class="h-10 w-10 rounded-full" src="brgy.png"/>
 </div>
 </header>
+
+<!-- Resident Information Tab -->
+<section class="hidden p-8" id="residentInfoSection">
+<div class="mb-4 flex items-center justify-between">
+    <h3 class="text-xl font-bold text-blue-800">Resident Information</h3>
+    <input type="text" id="residentSearchInput" class="border px-2 py-1 rounded max-w-md ml-auto" style="min-width:250px;" placeholder="Search residents by name, username, email, or contact...">
+</div>
+<button class="mb-4 bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded transition" id="addResidentInfoBtn">+ Add Resident</button>
+<div class="mb-4 hidden" id="addResidentInfoForm">
+    <form class="bg-white p-4 rounded shadow-md" id="residentInfoForm">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <input type="text" id="residentInfoFirstName" placeholder="First Name" class="border px-2 py-1 rounded w-full" required>
+            <input type="text" id="residentInfoLastName" placeholder="Last Name" class="border px-2 py-1 rounded w-full" required>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <input type="text" id="residentInfoUsername" placeholder="Username" class="border px-2 py-1 rounded w-full" required>
+            <input type="email" id="residentInfoEmail" placeholder="Email" class="border px-2 py-1 rounded w-full" required>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <input type="password" id="residentInfoPassword" placeholder="Password" class="border px-2 py-1 rounded w-full" required>
+            <select id="residentInfoRole" class="border px-2 py-1 rounded w-full">
+                <option value="resident">Resident</option>
+                <option value="kagawad">Kagawad</option>
+                <option value="chairman">Chairman/Chairwoman</option>
+                <option value="official">Barangay Official</option>
+            </select>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <input type="text" id="residentInfoAddress" placeholder="Address" class="border px-2 py-1 rounded w-full">
+            <input type="text" id="residentInfoContact" placeholder="Contact Number" class="border px-2 py-1 rounded w-full">
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <input type="date" id="residentInfoBirthday" placeholder="Birthday" class="border px-2 py-1 rounded w-full">
+            <select id="residentInfoGender" class="border px-2 py-1 rounded w-full">
+                <option value="">Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+        <div class="grid grid-cols-1 gap-4 mb-4">
+            <label class="block text-gray-700 mb-2">Profile Picture</label>
+            <input type="file" id="residentInfoProfilePic" accept="image/*" class="border px-2 py-1 rounded w-full">
+        </div>
+        <div class="flex gap-2 mb-2">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Add</button>
+            <button type="button" id="cancelAddResidentInfo" class="bg-gray-400 text-white px-4 py-2 rounded">Cancel</button>
+        </div>
+        <div id="residentInfoAddError" class="text-red-600 mt-2"></div>
+    </form>
+</div>
+<div id="residentInfoGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+</section>
+
 <!-- Dashboard Cards -->
 <section class="p-8" id="dashboardMain">
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-<div class="bg-blue-600 text-white rounded-lg p-6 flex flex-col items-center"><span class="text-3xl mb-2">👥</span><div class="font-bold text-lg">POPULATION</div><div class="text-2xl">2</div><div class="mt-2 text-sm">Total Population</div></div>
-<div class="bg-purple-500 text-white rounded-lg p-6 flex flex-col items-center"><span class="text-3xl mb-2">👨</span><div class="font-bold text-lg">MALE</div><div class="text-2xl">1</div><div class="mt-2 text-sm">Total Male</div></div>
-<div class="bg-yellow-400 text-white rounded-lg p-6 flex flex-col items-center"><span class="text-3xl mb-2">👩</span><div class="font-bold text-lg">FEMALE</div><div class="text-2xl">1</div><div class="mt-2 text-sm">Total Female</div></div>
-<div class="bg-green-500 text-white rounded-lg p-6 flex flex-col items-center"><span class="text-3xl mb-2">🗳️</span><div class="font-bold text-lg">VOTERS</div><div class="text-2xl">0</div><div class="mt-2 text-sm">Total Voters</div></div>
-<div class="bg-blue-400 text-white rounded-lg p-6 flex flex-col items-center"><span class="text-3xl mb-2">👥</span><div class="font-bold text-lg">NON VOTERS</div><div class="text-2xl">2</div><div class="mt-2 text-sm">Total Non Voters</div></div>
+<div class="dashboard-population bg-blue-600 text-white rounded-lg p-6 flex flex-col items-center"><span class="text-3xl mb-2">👥</span><div class="font-bold text-lg">POPULATION</div><div class="dashboard-count text-2xl">2</div><div class="mt-2 text-sm">Total Population</div></div>
+<div class="dashboard-male bg-purple-500 text-white rounded-lg p-6 flex flex-col items-center"><span class="text-3xl mb-2">👨</span><div class="font-bold text-lg">MALE</div><div class="dashboard-count text-2xl">1</div><div class="mt-2 text-sm">Total Male</div></div>
+<div class="dashboard-female bg-yellow-400 text-white rounded-lg p-6 flex flex-col items-center"><span class="text-3xl mb-2">👩</span><div class="font-bold text-lg">FEMALE</div><div class="dashboard-count text-2xl">1</div><div class="mt-2 text-sm">Total Female</div></div>
+
 <div class="bg-purple-400 text-white rounded-lg p-6 flex flex-col items-center"><span class="text-3xl mb-2">📋</span><div class="font-bold text-lg">PRECINCT</div><div class="text-2xl">2</div><div class="mt-2 text-sm">Precint Information</div></div>
 <div class="bg-red-700 text-white rounded-lg p-6 flex flex-col items-center"><span class="text-3xl mb-2">🚩</span><div class="font-bold text-lg">PUROK</div><div class="text-2xl">8</div><div class="mt-2 text-sm">Purok Information</div></div>
 <div class="bg-red-500 text-white rounded-lg p-6 flex flex-col items-center"><span class="text-3xl mb-2">📑</span><div class="font-bold text-lg">BLOTTER</div><div class="text-2xl">1</div><div class="mt-2 text-sm">Blotter Information</div></div>
@@ -220,50 +274,6 @@ document.addEventListener('DOMContentLoaded', function() {
   if (typeof loadAnnouncements === 'function') { loadAnnouncements(); }
 });
 </script></section>
-<!-- Tabbed Sections -->
-<section class="hidden p-8" id="residentsSection">
-<h3 class="text-xl font-bold text-blue-800 mb-4">Residents</h3>
-<button class="mb-4 bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded transition" id="addResidentBtn">+ Add Resident</button>
-<div class="mb-4 hidden" id="addResidentForm">
-<form class="bg-white p-4 rounded shadow-md" id="residentForm">
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <input type="text" id="residentFirstName" placeholder="First Name" class="border px-2 py-1 rounded w-full" required>
-                    <input type="text" id="residentLastName" placeholder="Last Name" class="border px-2 py-1 rounded w-full" required>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <input type="text" id="residentUsername" placeholder="Username" class="border px-2 py-1 rounded w-full" required>
-                    <input type="email" id="residentEmail" placeholder="Email" class="border px-2 py-1 rounded w-full" required>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <input type="password" id="residentPassword" placeholder="Password" class="border px-2 py-1 rounded w-full" required>
-                    <select id="residentRole" class="border px-2 py-1 rounded w-full">
-                        <option value="resident">Resident</option>
-                        <option value="kagawad">Kagawad</option>
-                        <option value="chairman">Chairman/Chairwoman</option>
-                        <option value="official">Barangay Official</option>
-                    </select>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <input type="text" id="residentAddress" placeholder="Address" class="border px-2 py-1 rounded w-full">
-                    <input type="text" id="residentContact" placeholder="Contact Number" class="border px-2 py-1 rounded w-full">
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <input type="date" id="residentBirthday" placeholder="Birthday" class="border px-2 py-1 rounded w-full">
-                    <select id="residentGender" class="border px-2 py-1 rounded w-full">
-                        <option value="">Gender</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                    </select>
-                </div>
-                <div class="flex gap-2 mb-2">
-                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Add</button>
-                    <button type="button" id="cancelAddResident" class="bg-gray-400 text-white px-4 py-2 rounded">Cancel</button>
-                </div>
-                <div id="residentAddError" class="text-red-600 mt-2"></div>
-</form>
-</div>
-<div id="residentsTableBody">Residents will be loaded here.</div>
-</section>
 <section class="hidden p-8" id="officialsSection">
 <h3 class="text-xl font-bold text-blue-800 mb-4">Brgy Officials</h3>
 <div id="officialsTableBody">Officials will be loaded here.</div>
