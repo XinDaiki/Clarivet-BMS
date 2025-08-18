@@ -43,9 +43,18 @@
         // Load Officials
         function loadOfficials() {
             const officials = window.barangayApi.getUsers().filter(u => ['kagawad','chairman','official','admin'].includes(u.role));
-            let html = '<table class="min-w-full border border-gray-300 rounded-lg overflow-hidden"><thead class="bg-gray-100"><tr><th class="border px-4 py-2">Name</th><th class="border px-4 py-2">Role</th><th class="border px-4 py-2">Username</th><th class="border px-4 py-2">Email</th></tr></thead><tbody>';
+            let html = '<table class="min-w-full border border-gray-300 rounded-lg overflow-hidden"><thead class="bg-gray-100"><tr><th class="border px-4 py-2">Name</th><th class="border px-4 py-2">Role</th><th class="border px-4 py-2">Username</th><th class="border px-4 py-2">Email</th><th class="border px-4 py-2">Address</th><th class="border px-4 py-2">Contact</th><th class="border px-4 py-2">Birthday</th><th class="border px-4 py-2">Gender</th></tr></thead><tbody>';
             officials.forEach(o => {
-                html += `<tr><td class='border px-4 py-2'>${o.firstName} ${o.lastName}</td><td class='border px-4 py-2'>${o.role}</td><td class='border px-4 py-2'>${o.username}</td><td class='border px-4 py-2'>${o.email}</td></tr>`;
+                html += `<tr>
+                    <td class='border px-4 py-2'>${o.firstName} ${o.lastName}</td>
+                    <td class='border px-4 py-2'>${o.role}</td>
+                    <td class='border px-4 py-2'>${o.username}</td>
+                    <td class='border px-4 py-2'>${o.email}</td>
+                    <td class='border px-4 py-2'>${o.address || ''}</td>
+                    <td class='border px-4 py-2'>${o.contact || ''}</td>
+                    <td class='border px-4 py-2'>${o.birthday || ''}</td>
+                    <td class='border px-4 py-2'>${o.gender || ''}</td>
+                </tr>`;
             });
             html += '</tbody></table>';
             document.getElementById('officialsTableBody').innerHTML = html;
@@ -282,13 +291,18 @@
             renderAnnouncementsCard();
         }
 
-        // Initial announcements (if none)
-        const db = JSON.parse(localStorage.getItem('barangayDb')) || {};
-        if (!db.announcements) {
-            db.announcements = [
-                { title: 'Barangay Clean-Up Drive', date: '2025-08-20', details: 'Join us for a community clean-up at 8am.' },
-                { title: 'Health Check-Up', date: '2025-08-25', details: 'Free health check-up for all residents at the barangay hall.' }
-            ];
+        // Only initialize announcements if barangayDb is missing or empty
+        let db = JSON.parse(localStorage.getItem('barangayDb'));
+        if (!db || Object.keys(db).length === 0) {
+            db = {
+                users: [],
+                documents: [],
+                complaints: [],
+                announcements: [
+                    { title: 'Barangay Clean-Up Drive', date: '2025-08-20', details: 'Join us for a community clean-up at 8am.' },
+                    { title: 'Health Check-Up', date: '2025-08-25', details: 'Free health check-up for all residents at the barangay hall.' }
+                ]
+            };
             localStorage.setItem('barangayDb', JSON.stringify(db));
         }
 
