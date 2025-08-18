@@ -1,20 +1,21 @@
 (function() {
     window.logout = function() {
-        window.location.href = 'login.html';
+        window.location.href = 'index.html';
     };
 })();
 // This simulates a backend with database functionality using localStorage
 (function() {
-    // Database structure
-    if (!localStorage.getItem('barangayDb')) {
-        const initialDb = {
+    // Only initialize barangayDb if missing or empty
+    let db = JSON.parse(localStorage.getItem('barangayDb'));
+    if (!db || Object.keys(db).length === 0) {
+        db = {
             users: [
                 {
                     id: 1,
                     firstName: 'Barangay',
                     lastName: 'Admin',
                     username: 'admin',
-                    password: 'admin123', // In real app, this would be hashed
+                    password: 'admin123',
                     email: 'admin@barangay.gov',
                     role: 'admin',
                     createdAt: new Date().toISOString()
@@ -61,9 +62,10 @@
                 }
             ],
             documents: [],
-            complaints: []
+            complaints: [],
+            announcements: []
         };
-        localStorage.setItem('barangayDb', JSON.stringify(initialDb));
+        localStorage.setItem('barangayDb', JSON.stringify(db));
     }
 
     // Get the entire database
@@ -125,7 +127,7 @@
                 };
             }
             
-            // Create new user
+            // Create new user (include all info fields)
             const newUser  = {
                 id: db.users.length > 0 ? Math.max(...db.users.map(u => u.id)) + 1 : 1,
                 firstName: userData.firstName,
@@ -134,12 +136,14 @@
                 password: userData.password, // In real app, this would be hashed
                 email: userData.email,
                 role: userData.role,
+                address: userData.address || '',
+                contact: userData.contact || '',
+                birthday: userData.birthday || '',
+                gender: userData.gender || '',
                 createdAt: new Date().toISOString()
             };
-            
             db.users.push(newUser );
             saveDb(db);
-            
             return {
                 success: true,
                 user: {
@@ -148,7 +152,11 @@
                     lastName: newUser .lastName,
                     username: newUser .username,
                     email: newUser .email,
-                    role: newUser .role
+                    role: newUser .role,
+                    address: newUser.address,
+                    contact: newUser.contact,
+                    birthday: newUser.birthday,
+                    gender: newUser.gender
                 }
             };
         },
@@ -163,6 +171,10 @@
                 username: user.username,
                 email: user.email,
                 role: user.role,
+                address: user.address || '',
+                contact: user.contact || '',
+                birthday: user.birthday || '',
+                gender: user.gender || '',
                 createdAt: user.createdAt
             }));
         },
@@ -350,6 +362,8 @@ document.addEventListener("DOMContentLoaded", function() {
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
             const role = document.getElementById('userRole').value;
+            const idNumberInput = document.getElementById('idNumber');
+            const idNumber = idNumberInput ? idNumberInput.value.trim() : '';
 
             if (password !== confirmPassword) {
                 registerError.textContent = 'Passwords do not match.';
@@ -359,6 +373,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 registerError.textContent = 'Please fill in all fields.';
                 return;
             }
+            if (role === 'chairman' && idNumber !== '223012422') {
+                registerError.textContent = 'Please put Chairman ID.';
+                return;
+            }
+            if (role === 'official' && idNumber !== '00212293') {
+                registerError.textContent = 'Please put Official ID.';
+                return;
+            }
 
             const result = window.barangayApi.register({
                 firstName,
@@ -366,7 +388,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 username,
                 password,
                 email,
-                role
+                role,
+                idNumber
             });
             if (result.success) {
                 localStorage.setItem('currentUser', JSON.stringify(result.user));
@@ -377,3 +400,71 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
+
+ function logout() {
+       window.location.href = 'index.html';
+   }
+
+   // Password eye toggle for all forms
+   function togglePasswordVisibility(inputId) {
+       const input = document.getElementById(inputId);
+       if (input.type === "password") {
+           input.type = "text";
+       } else {
+           input.type = "password";
+       }
+   }
+
+   // Restrict dashboard access by role
+   function openDashboard(type) {
+       const currentUser = localStorage.getItem('currentUser');
+       if (!currentUser) {
+           alert('Please login first.');
+           window.location.href = 'login.html';
+           return;
+       }
+       const user = JSON.parse(currentUser);
+       // Accept both lowercase and uppercase role names
+       const allowedRoles = ['chairman', 'kagawad', 'admin'];
+       const userRole = user.role ? user.role.toLowerCase() : '';
+       if (type === 'official') {
+           if (allowedRoles.includes(userRole)) {
+               window.location.href = 'dashboard-official.html';
+           } else {
+               alert('CLASSIFIED: You are not allowed to access Official Dashboard.');
+           }
+       } else if (type === 'admin') {
+           if (allowedRoles.includes(userRole)) {
+               window.location.href = 'dashboard-admin.html';
+           } else {
+               alert('CLASSIFIED: You are not allowed to access Admin Tools.');
+           }
+       }
+   }
+
+   // Tab switching logic for login/register
+   document.addEventListener("DOMContentLoaded", function() {
+       const loginTab = document.getElementById("loginTab");
+       const registerTab = document.getElementById("registerTab");
+       const loginFormContainer = document.getElementById("loginFormContainer");
+       const registerFormContainer = document.getElementById("registerFormContainer");
+
+       if (loginTab && registerTab && loginFormContainer && registerFormContainer) {
+           loginTab.onclick = function() {
+               loginFormContainer.classList.remove("hidden");
+               registerFormContainer.classList.add("hidden");
+               loginTab.style.background = "#2563eb";
+               loginTab.style.color = "#fff";
+               registerTab.style.background = "#fff";
+               registerTab.style.color = "#2563eb";
+           };
+           registerTab.onclick = function() {
+               loginFormContainer.classList.add("hidden");
+               registerFormContainer.classList.remove("hidden");
+               registerTab.style.background = "#2563eb";
+               registerTab.style.color = "#fff";
+               loginTab.style.background = "#fff";
+               loginTab.style.color = "#2563eb";
+           };
+       }
+   });
