@@ -6,6 +6,7 @@
     <title>Barangay Management System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="icon" type="image/png" href="brgy.png">
    <link rel = "stylesheet" href = "style.css">
 </head>
 <body class="bg-gray-100">
@@ -45,26 +46,23 @@
         <!-- Main Content -->
         <main class="flex-grow container mx-auto px-4 py-8">
             <!-- Home Section -->
-            <section id="homeSection" class="flex flex-col items-center justify-center text-center min-h-[60vh]">
-                <div class="max-w-4xl w-full mx-auto flex flex-col items-center">
-                    <h1 class="text-4xl font-bold text-blue-800 mb-6">Welcome to Barangay Management System</h1>
-                    <p class="text-xl text-gray-700 mb-8">A comprehensive platform for barangay officials and residents to manage community affairs efficiently.</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 w-full justify-center">
+            <section id="homeSection" class="flex flex-col items-center justify-center text-center min-h-[80vh] py-12">
+                            <div class="max-w-5xl w-full mx-auto flex flex-col items-center">
+                                <h1 class="text-5xl font-bold text-blue-800 mb-10">Welcome to Barangay Management System</h1>
+                                <p class="text-2xl text-gray-700 mb-12">A comprehensive platform for barangay officials and residents to manage community affairs efficiently.</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16 w-full justify-center">
                         <a href="dashboard-resident.html" class="dashboard-card bg-white p-6 rounded-lg shadow-md transition hover:bg-blue-50 cursor-pointer block flex flex-col items-center">
-                            <img src="https://placehold.co/100x100" alt="Resident registration icon showing a person with a form" class="mx-auto h-16 w-16 mb-4">
+                            <img src="resident.jpg" alt="Resident registration icon showing a person with a form" class="mx-auto h-30 w-45 mb-5">
                             <h3 class="text-xl font-semibold text-blue-700 mb-2">Resident Portal</h3>
                             <p class="text-gray-600">Register as a resident and access barangay services online.</p>
                         </a>
                         <a href="#" onclick="openDashboard('admin')" class="dashboard-card bg-white p-6 rounded-lg shadow-md transition hover:bg-blue-50 cursor-pointer block flex flex-col items-center">
-                            <img src="https://placehold.co/100x100" alt="Admin tools icon showing gears and settings" class="mx-auto h-16 w-16 mb-4">
-                            <h3 class="text-xl font-semibold text-blue-700 mb-2">Admin Tools</h3>
+                            <img src="222.png"Admin tools icon showing gears and settings" class="mx-auto h-30 w-50 mb-5">
+                            <h3 class="text-xl font-semibold text-blue-700 mb-2">Barangay Officials</h3>
                             <p class="text-gray-600">Administrative functions for barangay administrators.</p>
                         </a>
                     </div>
-                    <button onclick="showSection('login')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full transition duration-300 transform hover:scale-105">
-                        Get Started
-                    </button>
-                </div>
+                    
             </section>
 
             <!-- About Section -->
@@ -85,35 +83,16 @@
                         </ul>
                     </div>
                     <div>
-                        <img src="https://placehold.co/500x300" alt="Community meeting in a barangay hall with officials and residents discussing" class="w-full h-auto rounded-lg shadow-md">
+                        <img src="default.png" alt="Community meeting in a barangay hall with officials and residents discussing" class="w-full h-auto rounded-lg shadow-md">
                     </div>
                 </div>
             </section>
 
            
+            
 
 
-
-        <!-- Footer -->
-        <footer class="bg-gray-800 text-white py-6">
-            <div class="container mx-auto px-4">
-                <div class="flex flex-col md:flex-row md:justify-between md:items-center items-center text-center md:text-left">
-                    <div class="mb-4 md:mb-0 flex flex-col items-center md:items-start">
-                        <h3 class="text-2xl font-bold mb-1">Barangay Management System</h3>
-                        <p class="text-gray-400 text-base">Serving the community with digital solutions</p>
-                    </div>
-                    <div class="flex flex-col md:flex-row md:space-x-6 space-y-2 md:space-y-0 items-center">
-                        <a href="#" class="text-gray-300 hover:text-white transition">Terms of Service</a>
-                        <a href="#" class="text-gray-300 hover:text-white transition">Privacy Policy</a>
-                        <a href="#" class="text-gray-300 hover:text-white transition">Contact Us</a>
-                    </div>
-                </div>
-                <div class="border-t border-gray-700 mt-6 pt-4 text-center text-gray-400 text-sm">
-                    &copy; 2025 Barangay Management System. All rights reserved. <span class="font-semibold text-white">By Clarivet Olei.</span>
-                </div>
-            </div>
-        </footer>
-    </div>
+      
 
     
    <script src="script.js"></script>
